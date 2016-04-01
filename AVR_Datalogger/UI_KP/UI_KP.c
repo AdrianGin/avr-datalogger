@@ -5,7 +5,9 @@
 #include "UI_KP.h"
 #include "hardUart/hardUart.h"
 
-static const prog_uint8_t KP_Button[] = {KP_2, KP_8, KP_5, KP_HASH, 
+#define ROM_LOC PROGMEM
+
+static const uint8_t ROM_LOC KP_Button[] = {KP_2, KP_8, KP_5, KP_HASH, 
                                   KP_4, KP_6, KP_A, KP_B, 
                                   KP_C, KP_D, KP_1, KP_3,
                                   KP_7, KP_9, KP_0, KP_STAR};

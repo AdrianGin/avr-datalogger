@@ -24,7 +24,7 @@
 #if MENU_DEBUG == 0
 #include <avr/pgmspace.h>
 #define PRINT_FUNC   UI_LCD_String_P
-#define MENU_TEXT    prog_char
+#define MENU_TEXT    char PROGMEM
 #endif
 
 #if MENU_DEBUG == 1

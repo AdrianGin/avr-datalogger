@@ -3,6 +3,7 @@
 #ifndef	_FLOAT_FUNCTIONS
 #define  _FLOAT_FUNCTIONS
 
+#include <stdint.h>
 
 #define MUTLIPLIER	(10000)
 #define FLOAT_EXPONENT_BITS   (0x7F8)
@@ -29,7 +30,7 @@ float32_t floatExponent(float32_t data, int8_t adjust);
 /** 16bit integer and decimal is the largest we can print */
 void printFloat(float data, uint8_t* string);
 
-float pgm_read_float(uint16_t* address_short);
+float xpgm_read_float(uint16_t* address_short);
 
 
 

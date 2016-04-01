@@ -51,7 +51,7 @@ void printFloat(float data, uint8_t* string)
 
 
 /** Returns a float from address short. */
-float pgm_read_float(uint16_t* address_short)
+float xpgm_read_float(uint16_t* address_short)
 {
    float32_t* floatPtr = (float32_t*)(address_short);;   
    float32_t returnFloat;

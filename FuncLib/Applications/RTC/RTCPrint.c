@@ -8,16 +8,15 @@
 #include "RTCPrint.h"
 #include "mmculib/uint8toa.h"
 
+#define ROM_LOC PROGMEM
 
-
-
-static const prog_char Monday[] = "Monday";
-static const prog_char Tuesday[] = "Tuesday";
-static const prog_char Wednesday[] = "Wednesday";
-static const prog_char Thursday[] = "Thursday";
-static const prog_char Friday[] = "Friday";
-static const prog_char Saturday[] = "Saturday";
-static const prog_char Sunday[] = "Sunday";
+static const char ROM_LOC Monday[] = "Monday";
+static const char ROM_LOC Tuesday[] = "Tuesday";
+static const char ROM_LOC Wednesday[] = "Wednesday";
+static const char ROM_LOC Thursday[] = "Thursday";
+static const char ROM_LOC Friday[] = "Friday";
+static const char ROM_LOC Saturday[] = "Saturday";
+static const char ROM_LOC Sunday[] = "Sunday";
 
 static const PGM_P WEEKDAYS[7] = {  Sunday,
 												Monday,

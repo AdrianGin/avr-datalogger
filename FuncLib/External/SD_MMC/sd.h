@@ -56,6 +56,7 @@
 #ifndef MMC_H
 #define MMC_H
 
+#include "hardwareSpecific.h"
 #include "diskio/diskio.h"
 
 #define SD_ERROR 		0
