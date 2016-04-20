@@ -40,8 +40,6 @@
 #define SENSOR_MAX 	(uint32_t)(2^(SENSOR_ENOB - 1))
 #define SENSOR_SATURATION_LIMIT ((2^16) - 1)
 
-/* Approximatley 2.5V */
-#define SENSOR_REFERNCE 256
 #define SENSOR_REF_MULTIPLIER 100.0
 
 

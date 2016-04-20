@@ -88,10 +88,21 @@
 #define ADS1213_DSYNC      (0)
 
 /* Byte 2 */
+
 #define ADS1213_MD2        (7)
 #define ADS1213_MD1        (6)
 #define ADS1213_MD0        (5)
 
+#define ADS1213_G2		   (4)
+#define ADS1213_G1		   (3)
+#define ADS1213_G0		   (2)
+
+#define ADS1213_CH1		   (1)
+#define ADS1213_CH0		   (0)
+
+#define ADS1213_OPMASK    ((1<<ADS1213_MD2) | (1<<ADS1213_MD1) | (1<<ADS1213_MD0))
+#define ADS1213_GMASK     ((1<<ADS1213_G2) | (1<<ADS1213_G1) | (1<<ADS1213_G0))
+#define ADS1213_CHMASK    ((1<<ADS1213_CH1) | (1<<ADS1213_CH0))
 
 /* Operating Modes */
 #define ADS1213_NORMAL     		((0x00) << (ADS1213_MD0))
@@ -105,6 +116,10 @@
 /* Data Formats */
 #define ADS1213_TWO_COMP          (0x00 << ADS1213_DF)
 #define ADS1213_OFFSET_BIN        (0x01 << ADS1213_DF)
+
+/* Reference Output */
+#define ADS1213_REF_OUT_HIZ		  (0x00 << ADS1213_REFO)
+#define ADS1213_REF_OUT_ON 		  (0x01 << ADS1213_REFO)
 
 /* Maximum Decimation Ratio */
 #define ADS1213_MAX_DCR		(8000)
@@ -180,6 +195,7 @@ void ADS1213_Startup(void);
 uint8_t ADS1213_Reset(void);
 void ADS1213_PsuedoCalib(void);
 void ADS1213_OpMode(const uint8_t data);
+void ADS1213_SetChannel(uint8_t ch);
 int32_t uint24_tSign(ADS1213Data_t data);
 
 void ADS1213_WriteInstruction(uint8_t address, const uint8_t* data, uint8_t nBytes);

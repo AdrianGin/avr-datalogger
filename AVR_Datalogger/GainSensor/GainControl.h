@@ -52,12 +52,19 @@ enum {
 } GainsM;
 
 /** Gains in FP */
-#define GAIN_9P6FP	9.588
+#define GAIN_9P6FP	9.615
 #define GAIN_2P5FP	2.472
 #define GAIN_0P4FP	0.4167
-#define GAIN_0P09FP	0.0857
-///#define GAIN_0P09FP	0.0649
-#define GAIN_0P04FP	0.0414
+#define GAIN_0P09FP	0.0866
+#define GAIN_0P04FP	0.0417
+
+//Gains with 3 implied decimal places
+#define GAIN_9P6	9615
+#define GAIN_2P5	2472
+#define GAIN_0P41	417
+#define GAIN_0P09	87
+#define GAIN_0P04	42
+
 
 /** Gain offsets */
 #define GAIN_9P6O		450e3
@@ -65,14 +72,6 @@ enum {
 #define GAIN_0P4O		14e3
 #define GAIN_0P09O	2500
 #define GAIN_0P04O	0
-
-/** All gains below are multiplied by the Gain Resolution */
-/** This means that floats will not need to be used */
-#define GAIN_RESOLUTION (10000)
-
-#define GAIN_DECIMAL(x) (uint16_t)( (int32_t)(x*GAIN_RESOLUTION) - (int32_t)(GAIN_INT(x)*GAIN_RESOLUTION)  )
-#define GAIN_INT(x) (uint16_t)((x/x) * x)
-
 
 extern const uint8_t GS_GAIN[];
 extern const float SENSOR_GAIN[];

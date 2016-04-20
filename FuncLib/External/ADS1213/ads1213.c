@@ -14,6 +14,7 @@
 
 
 int16_t ADS1213_DecimationRatio = 0x1FF;
+uint32_t ADS1213_RawReference = 0x00000000;
 
 /* Internal function */
 uint8_t ADS1213_TxByte(uint8_t data)
@@ -63,7 +64,7 @@ void ADS1213_POR(void)
 /* Resets the modulator count to zero */
 uint8_t ADS1213_Reset(void)
 {
-	uint8_t data = (1 << ADS1213_SDL) | (1 << ADS1213_DSYNC);
+	uint8_t data = (1 << ADS1213_SDL) | (1 << ADS1213_DSYNC) | (ADS1213_REF_OUT_ON) | (ADS1213_TWO_COMP);
 	return ADS1213_VerifiedWrite(ADS1213_CMD_REG_3, &data, 1);
 }
 
@@ -74,7 +75,7 @@ void ADS1213_Init(void)
 	ADS1213_CS_DDR |= (1 << ADS1213_CS_PIN);
 
 	const uint8_t data[] = {
-			(1 << ADS1213_SDL) | (1 << ADS1213_DSYNC) | (ADS1213_TWO_COMP),
+			(1 << ADS1213_SDL) | (1 << ADS1213_DSYNC) | (ADS1213_TWO_COMP) | (ADS1213_REF_OUT_ON),
 			ADS1213_SELF_CALIB,
 			(1 << ADS1213_SF2) | (ADS1213_DecimationRatio >> 8),
 			(ADS1213_DecimationRatio & 0xFF)};
@@ -155,15 +156,20 @@ uint32_t ADS1213_GetResult(void)
 int32_t uint24_tSign(ADS1213Data_t data)
 {
 
-	/* If the 24bit is negative... */
+	//data.result = (data.result << 8);
+
+#if 1
+	// If the 24bit is negative...
 	if (data.byte[2] & ADS1213_SIGN_BIT)
 	{
-		/* make it a 32_bit negative */
+		// make it a 32_bit negative
 		data.result = (~data.result + 1) & (0x007FFFFF);
 		data.result = -data.result;
 	}
-
 	return data.result;
+#endif
+
+	return (int32_t)(data.result / 256);
 }
 
 void ADS1213_CS_Pulse(void)
@@ -264,7 +270,7 @@ void ADS1213_Shutdown(void)
 
 void ADS1213_Startup(void)
 {
-	const uint8_t data[] = {(1 << ADS1213_SDL), ADS1213_SELF_CALIB };
+	const uint8_t data[] = {(1 << ADS1213_SDL) | (1 << ADS1213_DSYNC) | (ADS1213_TWO_COMP) | (ADS1213_REF_OUT_ON), ADS1213_SELF_CALIB };
 	/* Need to set SDL to SDOUT and turn on REFerence Ouput */
 	/* Do a Self Calib */
 	ADS1213_WriteInstruction(ADS1213_CMD_REG_3, (const uint8_t*)(&data), 2);
@@ -279,6 +285,35 @@ void ADS1213_PsuedoCalib(void)
 
 void ADS1213_OpMode(const uint8_t data)
 {
-	//const uint8_t data = ADS1213_PSEUDO_CALIB;
-	ADS1213_WriteInstruction(ADS1213_CMD_REG_2, &data, 1);
+	uint8_t cmdByte;
+	ADS1213_ReadInstruction(ADS1213_CMD_REG_2, &cmdByte, 1);
+
+	cmdByte &= ~(ADS1213_OPMASK);
+	cmdByte |= (data & ADS1213_OPMASK);
+
+	ADS1213_WriteInstruction(ADS1213_CMD_REG_2, &cmdByte, 1);
 }
+
+
+void ADS1213_SetChannel(uint8_t ch)
+{
+	uint8_t cmdByte;
+	ADS1213_ReadInstruction(ADS1213_CMD_REG_2, &cmdByte, 1);
+	cmdByte &= ~(ADS1213_CHMASK);
+	cmdByte |= (ch & ADS1213_CHMASK);
+	ADS1213_WriteInstruction(ADS1213_CMD_REG_2, &cmdByte, 1);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

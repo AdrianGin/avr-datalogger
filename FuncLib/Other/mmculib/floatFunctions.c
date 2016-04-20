@@ -61,3 +61,31 @@ float xpgm_read_float(uint16_t* address_short)
    returnFloat.byteField[0] = pgm_read_byte( &floatPtr->byteField[0]);         
    return returnFloat.FP;
 }
+
+
+
+
+
+
+/** 16bit integer and decimal is the largest we can print */
+void print3impliedDP(float data, uint8_t* string)
+{
+   float32_t working;
+	working.FP = data;
+	if( working.byteField[3] & FLOAT_SIGN_BIT)
+	{
+   	string[0] = '-';
+		data = -data;
+		working.byteField[3] &=  (~FLOAT_SIGN_BIT);
+	}
+	else
+	{
+		string[0] = '+';
+	}
+
+   uint16toa( working.FP, (char*)&string[1], 0);
+   strcat_P((char*)string, PSTR(".") );
+
+	working.FP = data - (int32_t)data;
+	float_4dp( working.FP * MUTLIPLIER, (char*)&string[strlen((char*)string)]);
+}

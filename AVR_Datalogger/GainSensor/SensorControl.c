@@ -21,6 +21,11 @@
 uint32_t SensorType;
 uint32_t SensorState;
 
+
+uint32_t SensorRawReferenceValue;
+//Raw Reference voltage is set to 2.5V.
+uint32_t SensorRawReferenceVoltage = 250;
+
 /* The sensor gain selects which index of the SENSOR_GAIN array is used */
 /* Each sensor will use 4_bits thus there are 16 combo's of gains */
 static uint8_t SensorGain[SENSOR_COUNT/2];
@@ -134,8 +139,7 @@ float32_t SensorCondition(uint32_t data, uint8_t gainIndex)
 	/* Convert signed 24bit into signed 32bit */
 	ConvertedData.result = data;
 	signedData = uint24_tSign( ConvertedData );
-	
-	//signedData -= GAIN_OFFSETS[gainIndex];
+	signedData -= GAIN_OFFSETS[gainIndex];
 		
 /** Debug only because the float output function can only handle 16bit */		   
 	dataFP.FP = (float)(signedData);
@@ -187,8 +191,13 @@ float32_t SensorCondition(uint32_t data, uint8_t gainIndex)
 
 
 
-
-
+//Expects a signed 24bit number
+void Sensor_UpdateRawReferenceValue(uint32_t val)
+{
+	int32_t signedData = (int32_t)(val << 8);
+	//signedData = uint24_tSign( val );
+	SensorRawReferenceValue = val;
+}
 
 
 

@@ -335,7 +335,6 @@ void ChannelSettings(void* data)
 		ADS1213_Reset();                 
    	/** Condition the data from the ADC */
 		ADCValue = ADS1213_GetResult();
-		ADCValue -= GAIN_OFFSETS[chGain];
 	   sample = SensorCondition(ADCValue, chGain); 
 		/* Print out the Voltage / Temperature */
 		if( SensorGetType(SelectedChannel) == SENSOR_TEMP )
