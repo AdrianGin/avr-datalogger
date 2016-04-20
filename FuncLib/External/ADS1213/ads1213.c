@@ -155,21 +155,9 @@ uint32_t ADS1213_GetResult(void)
  * translates it into a signed 32bit integer. */
 int32_t uint24_tSign(ADS1213Data_t data)
 {
-
-	//data.result = (data.result << 8);
-
-#if 1
-	// If the 24bit is negative...
-	if (data.byte[2] & ADS1213_SIGN_BIT)
-	{
-		// make it a 32_bit negative
-		data.result = (~data.result + 1) & (0x007FFFFF);
-		data.result = -data.result;
-	}
-	return data.result;
-#endif
-
-	return (int32_t)(data.result / 256);
+	int32_t signedResult;
+	signedResult = (data.result << 8);
+	return (int32_t)(signedResult / 256);
 }
 
 void ADS1213_CS_Pulse(void)
