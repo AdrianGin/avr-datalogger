@@ -12,7 +12,10 @@
 #include <avr/io.h>
 
 
-
+#define ADS1213_CLK        (2e6)
+#define ADS1213_CS_DDR     (DDRA)
+#define ADS1213_CS_PIN     (PA0)
+#define ADS1213_CS_PORT    (PORTA)
 
 
 

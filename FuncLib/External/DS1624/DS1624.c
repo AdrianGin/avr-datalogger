@@ -11,10 +11,8 @@
  
  
 #include <avr/io.h>
-#include <avr/iom8.h>
-
 #include <stdint.h>
-#include	<stdlib.h> 
+#include <stdlib.h>
 
 #include "../I2C/i2c.h"
 #include "../DS1624/DS1624.h"

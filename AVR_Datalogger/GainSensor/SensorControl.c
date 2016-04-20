@@ -9,7 +9,7 @@
 #include "mmculib/floatFunctions.h"
 #include "ADS1213/ads1213.h"
 
-#define RESULT_DEBUG 0
+#define RESULT_DEBUG 1
 
 /* Sensor Area */
 
@@ -135,7 +135,7 @@ float32_t SensorCondition(uint32_t data, uint8_t gainIndex)
 	ConvertedData.result = data;
 	signedData = uint24_tSign( ConvertedData );
 	
-	signedData -= GAIN_OFFSETS[gainIndex];
+	//signedData -= GAIN_OFFSETS[gainIndex];
 		
 /** Debug only because the float output function can only handle 16bit */		   
 	dataFP.FP = (float)(signedData);
@@ -153,7 +153,8 @@ float32_t SensorCondition(uint32_t data, uint8_t gainIndex)
 
     
    uartTxString( (uint8_t*)"Float Data = ");
-   printFloat( dataFP.FP ); 	
+   printFloat( dataFP.FP, outputString );
+   uartTxString(outputString);    
    uartNewLine();
 #endif   
 /** Debug only */	
@@ -163,7 +164,8 @@ float32_t SensorCondition(uint32_t data, uint8_t gainIndex)
 #if RESULT_DEBUG   
 /** Debug only */	   
    uartTxString( (uint8_t*)"Current Gain = ");
-   printFloat( gainFP.FP ); 	
+   printFloat( gainFP.FP, outputString );
+   uartTxString(outputString);    
    uartNewLine();
 #endif   
 /** Debug only */	   
@@ -174,7 +176,9 @@ float32_t SensorCondition(uint32_t data, uint8_t gainIndex)
    
 #if RESULT_DEBUG  
    uartTxString( (uint8_t*)"Conditioned 'Voltage' is: "); 
-   printFloat(dataFP.FP);
+   printFloat(dataFP.FP, outputString);
+   uartTxString(outputString);   
+   uartNewLine(); 
 #endif      							
    
    return dataFP; 

@@ -36,13 +36,7 @@
 #include <stdint.h> 
 #include <math.h> 
  
-#define ADS1213_CLK        (2e6)
-#define ADS1213_CS_DDR     (DDRA)
-#define ADS1213_CS_PIN     (PA0)
-#define ADS1213_CS_PORT    (PORTA)  
-
-#define ADS1213_ENOB		22
-#define ADS1213_MAXOUTPUT ( pow(2,ADS1213_ENOB) - 1)
+#include "hardwareSpecific.h"
 
 /* Instruction Register Bits */
 #define ADS1213_RW         (7)
@@ -52,6 +46,36 @@
 #define ADS1213_A2         (2)
 #define ADS1213_A1         (1)
 #define ADS1213_A0         (0)
+
+//ADS1213 Register Addresses
+#define ADS1213_DATAOUTPUT_REG_2 		(0x00 << ADS1213_A0)
+#define ADS1213_DATAOUTPUT_REG_1 		(0x01 << ADS1213_A0)
+#define ADS1213_DATAOUTPUT_REG_0 		(0x02 << ADS1213_A0)
+#define ADS1213_CMD_REG_3 				(0x04 << ADS1213_A0)
+#define ADS1213_CMD_REG_2 				(0x05 << ADS1213_A0)
+#define ADS1213_CMD_REG_1 				(0x06 << ADS1213_A0)
+#define ADS1213_CMD_REG_0 				(0x07 << ADS1213_A0)
+#define ADS1213_OFFSET_CAL_REG_2 		(0x08 << ADS1213_A0)
+#define ADS1213_OFFSET_CAL_REG_1 		(0x09 << ADS1213_A0)
+#define ADS1213_OFFSET_CAL_REG_0 		(0x0A << ADS1213_A0)
+#define ADS1213_FULLSCALE_CAL_REG_2 	(0x0C << ADS1213_A0)
+#define ADS1213_FULLSCALE_CAL_REG_1 	(0x0D << ADS1213_A0)
+#define ADS1213_FULLSCALE_CAL_REG_0 	(0x0E << ADS1213_A0)
+
+#define ADS1213_1BYTE_INS 				(0x00 << ADS1213_MB0)
+#define ADS1213_2BYTE_INS 				(0x01 << ADS1213_MB0)
+#define ADS1213_3BYTE_INS 				(0x02 << ADS1213_MB0)
+#define ADS1213_4BYTE_INS 				(0x03 << ADS1213_MB0)
+
+#define ADS1213_WRITE_INS 				(0 << ADS1213_RW)
+#define ADS1213_READ_INS 				(1 << ADS1213_RW)
+
+
+
+#define ADS1213_ENOB		22
+#define ADS1213_MAXOUTPUT ( pow(2,ADS1213_ENOB) - 1)
+
+
 
 /* Command Register Bits */
 /* Byte 3 */
@@ -68,10 +92,19 @@
 #define ADS1213_MD1        (6)
 #define ADS1213_MD0        (5)
 
+
 /* Operating Modes */
-#define ADS1213_SELFCALIB  (0x01) << (ADS1213_MD0)
-#define ADS1213_SLEEP      (0x06) << (ADS1213_MD0)
-#define ADS1213_NORMAL     (0x00) << (ADS1213_MD0)
+#define ADS1213_NORMAL     		((0x00) << (ADS1213_MD0))
+#define ADS1213_SELF_CALIB  	((0x01) << (ADS1213_MD0))
+#define ADS1213_OFFSET_CALIB  	((0x02) << (ADS1213_MD0))
+#define ADS1213_FULLSCALE_CALIB ((0x03) << (ADS1213_MD0))
+#define ADS1213_PSEUDO_CALIB    ((0x04) << (ADS1213_MD0))
+#define ADS1213_BACKGND_CALIB   ((0x05) << (ADS1213_MD0))
+#define ADS1213_SLEEP           ((0x06) << (ADS1213_MD0))
+
+/* Data Formats */
+#define ADS1213_TWO_COMP          (0x00 << ADS1213_DF)
+#define ADS1213_OFFSET_BIN        (0x01 << ADS1213_DF)
 
 /* Maximum Decimation Ratio */
 #define ADS1213_MAX_DCR		(8000)
@@ -86,7 +119,36 @@
  * ie the 6th bit of Byte[2]*/
 #define ADS1213_BUSY       (0x1FFFFFFF)
 
+
+//SPI Timings
+#define ADS1213_min_us_time(clks) ((clks+1) / (ADS1213_CLK/1e6))
+
+
+
+//Timings for POR, see Figure 27 in Datasheet
+#define ADS1213_t1		ADS1213_min_us_time(600)
+#define ADS1213_t2		ADS1213_min_us_time(11)
+#define ADS1213_t3		ADS1213_min_us_time(1200)
+#define ADS1213_t4		ADS1213_min_us_time(2100)
+
+
+//Time between last Instruction and first data
+#define ADS1213_t19		ADS1213_min_us_time(13)
+//Minimum CS hold time (t24) start
+#define ADS1213_t24		ADS1213_min_us_time(11)
+//Minimum CS hold time (t20+t23) end
+#define ADS1213_t20_23		ADS1213_min_us_time(10+2)
+
+
+
+//Time between last Data and next Instruction
+#define ADS1213_t36		ADS1213_min_us_time(41)
+
+
 #define ADS1213_SIGN_BIT   (0x80)
+
+#define ADS1213_VERIFICATION_ERR (0x01)
+
 typedef union ADS1213_data 
 {
    uint8_t  byte[4];
@@ -115,8 +177,25 @@ uint32_t ADS1213_GetResult(void);
 void ADS1213_CS_Pulse(void);
 void ADS1213_Shutdown(void);
 void ADS1213_Startup(void);
-void ADS1213_Reset(void);
+uint8_t ADS1213_Reset(void);
 void ADS1213_PsuedoCalib(void);
+void ADS1213_OpMode(const uint8_t data);
 int32_t uint24_tSign(ADS1213Data_t data);
+
+void ADS1213_WriteInstruction(uint8_t address, const uint8_t* data, uint8_t nBytes);
+void ADS1213_ReadInstruction(uint8_t address, uint8_t* data, uint8_t nBytes);
+
+uint8_t ADS1213_VerifiedWrite(uint8_t address, const uint8_t* data, uint8_t nBytes);
+
+inline void ADS1213_SELECT(void)
+{
+	ADS1213_CS_PORT &= ~(1 << ADS1213_CS_PIN);
+}
+
+inline void ADS1213_DESELECT(void)
+{
+	ADS1213_CS_PORT |= (1 << ADS1213_CS_PIN);
+}
+
 
 #endif

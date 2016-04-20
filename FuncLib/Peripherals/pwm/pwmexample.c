@@ -1,5 +1,4 @@
 #include <avr/io.h>
-#include <avr/iom8.h>
 #include <stdint.h>
 #include "pause.h"
 #include "pwm.h"
@@ -16,7 +15,7 @@ int main(void)
 		pwmTimer1BEnable(128);
 		pwmTimer1AEnable(128);
 
-    uint16 i;
+    uint16_t i;
     while(1)
     {
     	for (i = 0; i < 255 ; i++)

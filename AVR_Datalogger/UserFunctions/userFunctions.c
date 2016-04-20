@@ -111,11 +111,11 @@ void ChannelDown(void* data)
 
 uint8_t GainUp(void* data)
 {
-   if( gain == GAIN_COUNT )
+	gain = gain + 1;
+   if( gain >= (GAIN_COUNT-1) )
    {
-      gain = GAIN_COUNT - 2;  
+      gain = GAIN_COUNT - 1;
    }      
-   gain = gain + 1;
    GS_GainSel( pgm_read_byte( &GS_GAIN[gain])  );
    
    return gain;
@@ -335,7 +335,7 @@ void ChannelSettings(void* data)
 		ADS1213_Reset();                 
    	/** Condition the data from the ADC */
 		ADCValue = ADS1213_GetResult();
-		//ADCValue -= GAIN_OFFSETS[chGain];	
+		ADCValue -= GAIN_OFFSETS[chGain];
 	   sample = SensorCondition(ADCValue, chGain); 
 		/* Print out the Voltage / Temperature */
 		if( SensorGetType(SelectedChannel) == SENSOR_TEMP )
@@ -1009,14 +1009,46 @@ void Calibrate(void* data)
 	MenuPrint_P( PSTR("and press C"));	
 	
 	
+	static uint8_t dataCalib[4];
+	uint32_t* dataPtr = &dataCalib[0];
+	char outputString[20];
+
 	if( firstEnter == 0 )
 	{
 		if( *input == KP_C )
 		{
 			GS_Channel(CALIBRATION_CHANNEL);
 			GS_GainSel( pgm_read_byte( &GS_GAIN[CALIBRATION_GAIN])  );
-			ADS1213_PsuedoCalib();
+			_delay_ms(200);
+			ADS1213_OpMode(ADS1213_SELF_CALIB);
+			//ADS1213_PsuedoCalib();
 			
+			ADS1213_ReadInstruction(ADS1213_OFFSET_CAL_REG_2, dataCalib, 3);
+
+
+			dataCalib[3] = dataCalib[0];
+			dataCalib[0] = dataCalib[2];
+			dataCalib[2] = dataCalib[3];
+
+			dataCalib[3] = 0;
+
+			ltoa( *dataPtr, outputString, 10);
+		    uartTxString( (uint8_t*)"Calibration Offset = ");
+		    uartTxString(outputString);
+		    uartNewLine();
+
+
+			ADS1213_ReadInstruction(ADS1213_FULLSCALE_CAL_REG_2, &dataCalib[2], 1);
+			ADS1213_ReadInstruction(ADS1213_FULLSCALE_CAL_REG_1, &dataCalib[1], 1);
+			ADS1213_ReadInstruction(ADS1213_FULLSCALE_CAL_REG_0, &dataCalib[0], 1);
+
+			dataCalib[3] = 0;
+
+			ltoa( *dataPtr, outputString, 10);
+		    uartTxString( (uint8_t*)"FS Calib = ");
+		    uartTxString(outputString);
+		    uartNewLine();
+
    		/* Go back up one menu */   
    		MenuSetInput(KB_BACK);
    		stateMachine(currentState);				

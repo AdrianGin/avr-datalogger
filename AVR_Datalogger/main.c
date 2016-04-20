@@ -67,7 +67,7 @@ int main(void)
 	MMC_CS_PORT |= (1 << MMC_CS_PIN);
 
 	/* Good for 250kbit */
-	uartInit(7, 1);
+	uartInit(BAUD9600, 1);
 
 	SD_Shutdown();
 
@@ -137,9 +137,9 @@ int main(void)
 	UI_SetRegister(MAX7300_CONFIG,
 			(1 << MAX7300_SHUTDOWN_CONTROL) | (1 << MAX7300_TRANSITION_ENABLE));
 
-	GS_Channel(CALIBRATION_CHANNEL);
-	GS_GainSel(pgm_read_byte(&GS_GAIN[CALIBRATION_GAIN]));
-	ADS1213_PsuedoCalib();
+	//GS_Channel(CALIBRATION_CHANNEL);
+	//GS_GainSel(pgm_read_byte(&GS_GAIN[CALIBRATION_GAIN]));
+	//ADS1213_PsuedoCalib();
 
 	sei();
 
@@ -147,12 +147,9 @@ int main(void)
 	{
 		/* Need to reset Interrupt */
 		set_sleep_mode(SLEEP_MODE_IDLE);
-		sleep_enable()
-		;
-		sleep_cpu()
-		;
-		sleep_disable()
-		;
+		sleep_enable();
+		sleep_cpu();
+		sleep_disable();
 		sei();
 	}
 

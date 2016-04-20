@@ -20,6 +20,7 @@
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.cdt.core.cnature</nature>
+		<nature>org.eclipse.cdt.core.ccnature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
@@ -27,7 +28,7 @@
 		<link>
 			<name>FuncLib</name>
 			<type>2</type>
-			<location>F:/Robotics/avr-datalogger/FuncLib</location>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/FuncLib</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

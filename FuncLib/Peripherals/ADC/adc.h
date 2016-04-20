@@ -23,8 +23,10 @@
  */
  
 
-#ifndef 	_ADC_ROUTINES
+#ifndef _ADC_ROUTINES
 #define	_ADC_ROUTINES
+
+#include <stdint.h>
 
 /* ADC Reference voltage */
 #define ADC_REF_AREF 0x00

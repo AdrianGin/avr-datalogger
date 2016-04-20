@@ -3,12 +3,11 @@
 
 
 #include <avr/io.h>
-#include <avr/iom8.h>
 #include <stdint.h>
 #include "pause.h"
 #include "pwm.h"
 
-void pwmTimer1AEnable(uint16 pwmDutyCycle)
+void pwmTimer1AEnable(uint16_t pwmDutyCycle)
 {
 	 
 	 DDRB    |= ( 1<<(PB1) );
@@ -38,7 +37,7 @@ void pwmTimer1AEnable(uint16 pwmDutyCycle)
 //}
 
 /* Set the OC1B Pin as a PWM output, and set Duty Cycle */
-void pwmTimer1BEnable(uint16 pwmDutyCycle)
+void pwmTimer1BEnable(uint16_t pwmDutyCycle)
 {
     DDRB    |= (1<<PB2);
     TCCR1A  |= ( (1<<COM1B1) );
@@ -61,7 +60,7 @@ void pwmTimer1BDisable(void)
 }
 
 /* Set Timer1's prescaler, set PWM mode to Fast PWM and set PWM frequency */
-void pwmTimer1Initialise(uint16 pwmTopCount, uint8 pwmPreScaler)
+void pwmTimer1Initialise(uint16_t pwmTopCount, uint8_t pwmPreScaler)
 {
     /*Set to Fast PWM with ICR being the Top.*/
     TCCR1A |= ( (1<<WGM11) ); 

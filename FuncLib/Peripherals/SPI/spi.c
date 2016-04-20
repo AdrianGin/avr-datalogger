@@ -41,13 +41,9 @@ void SPI_Init(void)
    SPI_PORT &= ~((1 << MOSI));
    SPI_PORT |= ((1 << nSS) | (1 << MISO) | (1 << SCK) | (1 << MOSI));
      
-    
-   /* set CLK speed to fclk/32 */
+
    SPCR |= ((1 << SPR0) | (1 << SPR1));
-   //SPSR |= (1<<SPI2X);
-   /*
-   SPSR;
-   SPCR |= (1 << SPIE);  */
+
 }
 
 

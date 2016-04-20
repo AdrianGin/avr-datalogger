@@ -79,7 +79,10 @@ void SC_Sample(void)
          chGain = SensorGetGain(i);
          GS_GainSel( pgm_read_byte( &GS_GAIN[chGain]) );
 
-			ADS1213_Reset();                 
+		 if( ADS1213_Reset() == ADS1213_VERIFICATION_ERR )
+		 {
+			 uartTxString_P( PSTR("VERIFY ERROR\n") );
+		 }
          /** Condition the data from the ADC */
          ADCValue = ADS1213_GetResult();
 	

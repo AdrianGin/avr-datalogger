@@ -27,7 +27,6 @@
 
 #include <stdint.h>
 #include <avr/io.h>
-#include <avr/iom8.h>
 #include "adc.h"
 
 
